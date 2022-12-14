@@ -1,6 +1,7 @@
 package com.nttdata.bootcamp.controller;
 
 import com.nttdata.bootcamp.entity.ChargeConsumption;
+import com.nttdata.bootcamp.util.Constant;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import com.nttdata.bootcamp.entity.dto.ChargeConsumptionDto;
 import java.util.Date;
 import javax.validation.Valid;
 
@@ -49,7 +51,7 @@ public class ChargeConsumptionController {
 	//Save charge consumption
 	@CircuitBreaker(name = "charge-consumption", fallbackMethod = "fallBackGetChargeConsumption")
 	@PostMapping(value = "/saveChargeConsumption")
-	public Mono<ChargeConsumption> saveChargeConsumption(@RequestBody ChargeConsumption dataChargeConsumption,
+	public Mono<ChargeConsumption> saveChargeConsumption(@RequestBody ChargeConsumptionDto dataChargeConsumption,
 														 @PathVariable("creditLimit") Double creditLimit){
 		ChargeConsumption datacharge = new ChargeConsumption();
 		if(creditLimit>=dataChargeConsumption.getAmount()) {
@@ -57,9 +59,9 @@ public class ChargeConsumptionController {
 						t.setDni(dataChargeConsumption.getDni());
 						t.setAmount(dataChargeConsumption.getAmount());
 						t.setChargeNumber(dataChargeConsumption.getChargeNumber());
-						t.setTypeAccount("active");
+						t.setTypeAccount(Constant.TYPE_ACCOUNT);
 						t.setAccountNumber(dataChargeConsumption.getAccountNumber());
-						t.setStatus("active");
+						t.setStatus(Constant.STATUS_ACTIVE);
 						t.setCreationDate(new Date());
 						t.setModificationDate(new Date());
 					}).onErrorReturn(datacharge).onErrorResume(e -> Mono.just(datacharge))
