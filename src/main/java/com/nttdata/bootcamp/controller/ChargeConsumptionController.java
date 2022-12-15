@@ -16,6 +16,7 @@ import com.nttdata.bootcamp.entity.dto.ChargeConsumptionDto;
 import java.util.Date;
 import javax.validation.Valid;
 
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping(value = "/chargeConsumption")
 public class ChargeConsumptionController {
@@ -50,7 +51,7 @@ public class ChargeConsumptionController {
 
 	//Save charge consumption
 	@CircuitBreaker(name = "charge-consumption", fallbackMethod = "fallBackGetChargeConsumption")
-	@PostMapping(value = "/saveChargeConsumption")
+	@PostMapping(value = "/saveChargeConsumption/{creditLimit}")
 	public Mono<ChargeConsumption> saveChargeConsumption(@RequestBody ChargeConsumptionDto dataChargeConsumption,
 														 @PathVariable("creditLimit") Double creditLimit){
 		ChargeConsumption datacharge = new ChargeConsumption();
