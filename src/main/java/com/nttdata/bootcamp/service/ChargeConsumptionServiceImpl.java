@@ -41,7 +41,7 @@ public class ChargeConsumptionServiceImpl implements ChargeConsumptionService {
 
     @Override
     public Mono<ChargeConsumption> saveChargeConsumption(ChargeConsumption dataChargeConsumption) {
-        Mono<ChargeConsumption> chargeConsumptionMono = findByNumber(dataChargeConsumption.getDni())
+        Mono<ChargeConsumption> chargeConsumptionMono = findByNumber(dataChargeConsumption.getChargeNumber())
                 .flatMap(__ -> Mono.<ChargeConsumption>error(new Error("This charge number" + dataChargeConsumption.getDni() + " exists")))
                 .switchIfEmpty(chargeConsumptionRepository.save(dataChargeConsumption));
         return chargeConsumptionMono;
