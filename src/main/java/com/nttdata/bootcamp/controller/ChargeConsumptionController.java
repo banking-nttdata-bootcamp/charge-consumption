@@ -63,10 +63,14 @@ public class ChargeConsumptionController {
 						t.setTypeAccount(Constant.TYPE_ACCOUNT);
 						t.setAccountNumber(dataChargeConsumption.getAccountNumber());
 						t.setStatus(Constant.STATUS_ACTIVE);
+						t.setCommission(0.00);
 						t.setCreationDate(new Date());
 						t.setModificationDate(new Date());
 					}).onErrorReturn(datacharge).onErrorResume(e -> Mono.just(datacharge))
 					.onErrorMap(f -> new InterruptedException(f.getMessage())).subscribe(x -> LOGGER.info(x.toString()));
+		}
+		else {
+			Mono.just(datacharge);
 		}
 		Mono<ChargeConsumption> newCharge = chargeConsumptionService.saveChargeConsumption(datacharge);
 		return newCharge;

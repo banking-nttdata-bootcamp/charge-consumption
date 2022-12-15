@@ -32,17 +32,17 @@ public class ChargeConsumptionServiceImpl implements ChargeConsumptionService {
 
     @Override
     public Mono<ChargeConsumption> findByNumber(String Number) {
-        Mono<ChargeConsumption> loadBalanceMono = chargeConsumptionRepository
+        Mono<ChargeConsumption> chargeConsumptionMono = chargeConsumptionRepository
                 .findAll()
                 .filter(x -> x.getChargeNumber().equals(Number))
                 .next();
-        return loadBalanceMono;
+        return chargeConsumptionMono;
     }
 
     @Override
     public Mono<ChargeConsumption> saveChargeConsumption(ChargeConsumption dataChargeConsumption) {
         Mono<ChargeConsumption> chargeConsumptionMono = findByNumber(dataChargeConsumption.getChargeNumber())
-                .flatMap(__ -> Mono.<ChargeConsumption>error(new Error("This charge number" + dataChargeConsumption.getDni() + " exists")))
+                .flatMap(__ -> Mono.<ChargeConsumption>error(new Error("This charge number" + dataChargeConsumption.getChargeNumber() + " exists")))
                 .switchIfEmpty(chargeConsumptionRepository.save(dataChargeConsumption));
         return chargeConsumptionMono;
 
