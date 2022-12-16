@@ -1,7 +1,9 @@
-package com.nttdata.bootcamp.service;
+package com.nttdata.bootcamp.service.impl;
 
 import com.nttdata.bootcamp.entity.ChargeConsumption;
 import com.nttdata.bootcamp.repository.ChargeConsumptionRepository;
+import com.nttdata.bootcamp.service.ChargeConsumptionService;
+import com.nttdata.bootcamp.service.KafkaService;
 import com.nttdata.bootcamp.util.Constant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,6 +17,8 @@ import java.util.Date;
 public class ChargeConsumptionServiceImpl implements ChargeConsumptionService {
     @Autowired
     private ChargeConsumptionRepository chargeConsumptionRepository;
+    @Autowired
+    private KafkaService kafkaService;
 
     @Override
     public Flux<ChargeConsumption> findAll() {
@@ -43,7 +47,7 @@ public class ChargeConsumptionServiceImpl implements ChargeConsumptionService {
     public Mono<ChargeConsumption> saveChargeConsumption(ChargeConsumption dataChargeConsumption) {
         Mono<ChargeConsumption> chargeConsumptionMono = findByNumber(dataChargeConsumption.getChargeNumber())
                 .flatMap(__ -> Mono.<ChargeConsumption>error(new Error("This charge number" + dataChargeConsumption.getChargeNumber() + " exists")))
-                .switchIfEmpty(chargeConsumptionRepository.save(dataChargeConsumption));
+                .switchIfEmpty(saveTopic(dataChargeConsumption));
         return chargeConsumptionMono;
 
 
@@ -74,6 +78,12 @@ public class ChargeConsumptionServiceImpl implements ChargeConsumptionService {
             return Mono.<Void>error(new Error("This charge consumption" + Number+ " do not exists"));
         }
     }
+    public Mono<ChargeConsumption> saveTopic(ChargeConsumption chargeConsumption){
+        Mono<ChargeConsumption> consumptionMono = chargeConsumptionRepository.save(chargeConsumption);
+        this.kafkaService.publish(consumptionMono.block());
+        return consumptionMono;
+    }
+
 
 
 
