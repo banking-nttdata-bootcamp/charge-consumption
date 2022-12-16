@@ -19,8 +19,8 @@ public class KafkaServiceImpl implements KafkaService {
     @Autowired
     private KafkaTemplate<String, EventKafka<?>> producer;
 
-    @Value("${topic.withdrawal.name}")
-    private String topicWithdrawal;
+    @Value("${topic.charge.name}")
+    private String topicCharge;
 
     public void publish(ChargeConsumption chargeConsumption) {
 
@@ -30,7 +30,7 @@ public class KafkaServiceImpl implements KafkaService {
         created.setType(EventType.CREATED);
         created.setDate(new Date());
 
-        this.producer.send(topicWithdrawal, created);
+        this.producer.send(topicCharge, created);
     }
 
 }
