@@ -69,9 +69,7 @@ public class ChargeConsumptionController {
 					}).onErrorReturn(datacharge).onErrorResume(e -> Mono.just(datacharge))
 					.onErrorMap(f -> new InterruptedException(f.getMessage())).subscribe(x -> LOGGER.info(x.toString()));
 		}
-		else {
-			Mono.just(datacharge);
-		}
+
 		Mono<ChargeConsumption> newCharge = chargeConsumptionService.saveChargeConsumption(datacharge);
 		return newCharge;
 	}
